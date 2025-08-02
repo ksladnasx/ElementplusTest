@@ -112,7 +112,7 @@
                         </span>
                     </template>
                 </el-table-column>
-                <el-table-column label="操作" width="120" fixed="right">
+                <el-table-column label="操作" width="120" fixed="right" class="action-column">
                     <template #default="{ row }">
                         <el-button type="primary" link @click="viewEmployeeDetail(row.employee)">
                             <el-icon>

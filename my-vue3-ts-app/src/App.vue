@@ -1,8 +1,8 @@
 <template>
   <div id="app" :class="{ 'dark-mode': isDark }">
     <el-container class="app-container">
-      <!-- 侧边栏 -->
-      <el-aside :width="isCollapse ? '64px' : '250px'" class="sidebar">
+      <!-- 桌面端侧边栏 -->
+      <el-aside :width="isCollapse ? '64px' : '250px'" class="sidebar desktop-sidebar">
         <div class="logo">
           <el-icon size="24">
             <Money />
@@ -39,20 +39,27 @@
         <!-- 顶部导航栏 -->
         <el-header class="header">
           <div class="header-left">
-            <el-button type="text" @click="toggleCollapse" class="collapse-btn">
+            <!-- 移动端菜单按钮 -->
+            <el-button type="text" @click="showMobileMenu" class="mobile-menu-btn">
+              <el-icon size="20">
+                <Menu />
+              </el-icon>
+            </el-button>
+            <!-- 桌面端收起按钮 -->
+            <el-button type="text" @click="toggleCollapse" class="collapse-btn desktop-only">
               <el-icon size="20">
                 <Fold v-if="!isCollapse" />
                 <Expand v-else />
               </el-icon>
             </el-button>
-            <el-breadcrumb separator="/">
+            <el-breadcrumb separator="/" class="breadcrumb">
               <el-breadcrumb-item>首页</el-breadcrumb-item>
               <el-breadcrumb-item>{{ currentPageTitle }}</el-breadcrumb-item>
             </el-breadcrumb>
           </div>
 
           <div class="header-right">
-            <el-dropdown @command="handleDataCommand">
+            <el-dropdown @command="handleDataCommand" class="desktop-only">
               <el-button type="primary" plain>
                 <el-icon>
                   <Setting />
@@ -70,6 +77,13 @@
               </template>
             </el-dropdown>
 
+            <!-- 移动端数据管理按钮 -->
+            <el-button type="primary" plain @click="showMobileDataMenu" class="mobile-only">
+              <el-icon>
+                <Setting />
+              </el-icon>
+            </el-button>
+
             <ThemeSwitcher v-model:is-dark="isDark" />
           </div>
         </el-header>
@@ -81,8 +95,58 @@
       </el-container>
     </el-container>
 
+    <!-- 移动端侧边栏抽屉 -->
+    <el-drawer v-model="mobileMenuVisible" title="菜单" direction="ltr" size="280px" class="mobile-drawer">
+      <div class="mobile-logo">
+        <el-icon size="24">
+          <Money />
+        </el-icon>
+        <span>账单管理系统</span>
+      </div>
+      <el-menu :default-active="activeMenu" class="mobile-menu" :router="true"
+        :background-color="isDark ? '#1a1a1a' : '#ffffff'" :text-color="isDark ? '#e0e0e0' : '#303133'"
+        :active-text-color="isDark ? '#409eff' : '#409eff'" @select="closeMobileMenu">
+        <el-menu-item index="/employees">
+          <el-icon>
+            <User />
+          </el-icon>
+          <span>员工管理</span>
+        </el-menu-item>
+        <el-menu-item index="/bills">
+          <el-icon>
+            <Document />
+          </el-icon>
+          <span>账单管理</span>
+        </el-menu-item>
+        <el-menu-item index="/statistics">
+          <el-icon>
+            <DataAnalysis />
+          </el-icon>
+          <span>数据统计</span>
+        </el-menu-item>
+      </el-menu>
+    </el-drawer>
+
+    <!-- 移动端数据管理抽屉 -->
+    <el-drawer v-model="mobileDataMenuVisible" title="数据管理" direction="rtl" size="280px">
+      <div class="mobile-data-menu">
+        <el-button type="primary" @click="handleExport" style="width: 100%; margin-bottom: 15px;">
+          <el-icon>
+            <Download />
+          </el-icon>
+          导出数据
+        </el-button>
+        <el-button type="success" @click="showImportDialog" style="width: 100%;">
+          <el-icon>
+            <Upload />
+          </el-icon>
+          导入数据
+        </el-button>
+      </div>
+    </el-drawer>
+
     <!-- 文件上传对话框 -->
-    <el-dialog v-model="importDialogVisible" title="导入数据" width="400px">
+    <el-dialog v-model="importDialogVisible" title="导入数据" width="90%" :close-on-click-modal="false">
       <el-upload ref="uploadRef" :auto-upload="false" :on-change="handleFileChange" :show-file-list="false"
         accept=".json">
         <el-button type="primary">选择文件</el-button>
@@ -110,7 +174,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import {
-  Money, User, Document, DataAnalysis, Setting, ArrowDown, Fold, Expand
+  Money, User, Document, DataAnalysis, Setting, ArrowDown, Fold, Expand, Menu, Download, Upload
 } from '@element-plus/icons-vue';
 import ThemeSwitcher from './components/ThemeSwitcher.vue';
 import { exportData, importData } from './utils/storage';
@@ -122,6 +186,8 @@ const route = useRoute();
 // 响应式数据
 const isDark = ref(false);
 const isCollapse = ref(false);
+const mobileMenuVisible = ref(false);
+const mobileDataMenuVisible = ref(false);
 const importDialogVisible = ref(false);
 const importing = ref(false);
 const selectedFile = ref<File | null>(null);
@@ -141,6 +207,23 @@ const currentPageTitle = computed(() => {
 // 方法
 const toggleCollapse = () => {
   isCollapse.value = !isCollapse.value;
+};
+
+const showMobileMenu = () => {
+  mobileMenuVisible.value = true;
+};
+
+const closeMobileMenu = () => {
+  mobileMenuVisible.value = false;
+};
+
+const showMobileDataMenu = () => {
+  mobileDataMenuVisible.value = true;
+};
+
+const showImportDialog = () => {
+  mobileDataMenuVisible.value = false;
+  importDialogVisible.value = true;
 };
 
 const handleDataCommand = (command: string) => {
@@ -279,6 +362,17 @@ onMounted(() => {
   gap: 15px;
 }
 
+.mobile-menu-btn {
+  padding: 8px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.mobile-menu-btn:hover {
+  background-color: #f5f7fa;
+  color: #409eff;
+}
+
 .collapse-btn {
   padding: 8px;
   border-radius: 4px;
@@ -290,6 +384,11 @@ onMounted(() => {
   color: #409eff;
 }
 
+.breadcrumb {
+  flex: 1;
+  min-width: 0;
+}
+
 .header-right {
   display: flex;
   align-items: center;
@@ -299,6 +398,35 @@ onMounted(() => {
 .main-content {
   background-color: #f5f7fa;
   padding: 0;
+}
+
+/* 移动端样式 */
+.mobile-drawer {
+  .mobile-logo {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #303133;
+    border-bottom: 1px solid #e4e7ed;
+    background-color: #fafafa;
+    margin-bottom: 20px;
+  }
+
+  .mobile-logo .el-icon {
+    margin-right: 8px;
+    color: #409eff;
+  }
+
+  .mobile-menu {
+    border-right: none;
+  }
+}
+
+.mobile-data-menu {
+  padding: 20px;
 }
 
 /* 深色主题样式 */
@@ -337,6 +465,7 @@ onMounted(() => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
+.dark-mode .mobile-menu-btn:hover,
 .dark-mode .collapse-btn:hover {
   background-color: #333;
   color: #409eff;
@@ -347,18 +476,144 @@ onMounted(() => {
   color: #e0e0e0;
 }
 
+.dark-mode .mobile-logo {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  border-bottom-color: #333;
+}
+
+/* 移动端样式 */
+.mobile-drawer {
+  .mobile-logo {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #303133;
+    border-bottom: 1px solid #e4e7ed;
+    background-color: #fafafa;
+    margin-bottom: 20px;
+  }
+
+  .mobile-logo .el-icon {
+    margin-right: 8px;
+    color: #409eff;
+  }
+
+  .mobile-menu {
+    border-right: none;
+  }
+}
+
+.mobile-data-menu {
+  padding: 20px;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
-  .sidebar {
-    width: 64px !important;
+  .desktop-sidebar {
+    display: none !important;
+  }
+
+  .desktop-only {
+    display: none !important;
+  }
+
+  .mobile-only {
+    display: inline-flex !important;
   }
 
   .header {
-    padding: 0 10px;
+    padding: 0 15px;
+  }
+
+  .header-left {
+    gap: 10px;
   }
 
   .header-right {
     gap: 10px;
+  }
+
+  .breadcrumb {
+    display: none;
+  }
+
+  .main-content {
+    padding: 10px;
+  }
+
+  /* 移动端表格优化 */
+  .el-table {
+    font-size: 12px;
+  }
+
+  .el-table .cell {
+    padding: 8px 4px;
+  }
+
+  .el-card {
+    margin-bottom: 10px;
+  }
+
+  .el-card__header {
+    padding: 15px;
+  }
+
+  .el-card__body {
+    padding: 15px;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-only {
+    display: none !important;
+  }
+
+  .desktop-only {
+    display: inline-flex !important;
+  }
+}
+
+/* 小屏幕优化 */
+@media (max-width: 480px) {
+  .header {
+    padding: 0 10px;
+  }
+
+  .header-left {
+    gap: 8px;
+  }
+
+  .header-right {
+    gap: 8px;
+  }
+
+  .mobile-menu-btn,
+  .collapse-btn {
+    padding: 6px;
+  }
+}
+
+/* 小屏幕优化 */
+@media (max-width: 480px) {
+  .header {
+    padding: 0 10px;
+  }
+
+  .header-left {
+    gap: 8px;
+  }
+
+  .header-right {
+    gap: 8px;
+  }
+
+  .mobile-menu-btn,
+  .collapse-btn {
+    padding: 6px;
   }
 }
 
@@ -384,5 +639,39 @@ onMounted(() => {
 
 .el-menu--collapse .el-menu-item .el-icon {
   margin-right: 0;
+}
+
+/* 移动端抽屉样式优化 */
+.el-drawer__header {
+  padding: 20px;
+  margin-bottom: 0;
+  border-bottom: 1px solid #e4e7ed;
+}
+
+.dark-mode .el-drawer__header {
+  border-bottom-color: #333;
+}
+
+/* 移动端表格优化 */
+@media (max-width: 768px) {
+  .el-table {
+    font-size: 12px;
+  }
+
+  .el-table .cell {
+    padding: 8px 4px;
+  }
+
+  .el-card {
+    margin-bottom: 10px;
+  }
+
+  .el-card__header {
+    padding: 15px;
+  }
+
+  .el-card__body {
+    padding: 15px;
+  }
 }
 </style>

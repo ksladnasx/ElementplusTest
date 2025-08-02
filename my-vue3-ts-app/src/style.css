@@ -77,3 +77,193 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* 全局移动端适配样式 */
+
+/* 移动端表格优化 */
+@media (max-width: 768px) {
+  .el-table {
+    font-size: 12px;
+  }
+
+  .el-table .cell {
+    padding: 8px 4px;
+  }
+
+  .el-table th {
+    padding: 8px 4px;
+  }
+
+  .el-table td {
+    padding: 8px 4px;
+  }
+
+  /* 隐藏不必要的列 */
+  .el-table .phone-column,
+  .el-table .time-column,
+  .el-table .remark-column {
+    display: none;
+  }
+
+  /* 操作列优化 */
+  .el-table .action-column {
+    width: 100px !important;
+  }
+
+  .el-table .action-column .el-button {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+
+  /* 卡片优化 */
+  .el-card {
+    margin-bottom: 10px;
+  }
+
+  .el-card__header {
+    padding: 15px;
+  }
+
+  .el-card__body {
+    padding: 15px;
+  }
+
+  /* 表单优化 */
+  .el-form-item__label {
+    font-size: 14px;
+  }
+
+  .el-input,
+  .el-select {
+    font-size: 14px;
+  }
+
+  /* 按钮优化 */
+  .el-button {
+    font-size: 14px;
+    padding: 8px 15px;
+  }
+
+  /* 对话框优化 */
+  .el-dialog {
+    width: 95% !important;
+    margin: 5vh auto !important;
+  }
+
+  .el-dialog__body {
+    padding: 20px;
+  }
+
+  /* 抽屉优化 */
+  .el-drawer {
+    width: 280px !important;
+  }
+
+  /* 统计卡片优化 */
+  .stats-row .el-col {
+    margin-bottom: 15px;
+  }
+
+  .stat-card {
+    height: auto !important;
+    min-height: 100px;
+  }
+
+  .stat-item {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .stat-icon {
+    font-size: 32px !important;
+    margin-right: 0 !important;
+    margin-bottom: 10px;
+  }
+
+  .stat-value {
+    font-size: 20px !important;
+  }
+
+  .stat-label {
+    font-size: 12px !important;
+  }
+}
+
+/* 超小屏幕优化 */
+@media (max-width: 480px) {
+  .el-table {
+    font-size: 11px;
+  }
+
+  .el-table .cell {
+    padding: 6px 2px;
+  }
+
+  .el-card__header {
+    padding: 10px;
+  }
+
+  .el-card__body {
+    padding: 10px;
+  }
+
+  .el-button {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
+  .el-dialog {
+    width: 98% !important;
+  }
+
+  .el-dialog__body {
+    padding: 15px;
+  }
+
+  .stat-card {
+    min-height: 80px;
+  }
+
+  .stat-icon {
+    font-size: 24px !important;
+  }
+
+  .stat-value {
+    font-size: 16px !important;
+  }
+
+  .stat-label {
+    font-size: 10px !important;
+  }
+}
+
+/* 横屏优化 */
+@media (max-width: 768px) and (orientation: landscape) {
+  .el-table {
+    font-size: 11px;
+  }
+
+  .stat-card {
+    min-height: 70px;
+  }
+
+  .stat-icon {
+    font-size: 20px !important;
+  }
+}
+
+/* 触摸优化 */
+@media (hover: none) and (pointer: coarse) {
+  .el-button {
+    min-height: 44px;
+  }
+
+  .el-input,
+  .el-select {
+    min-height: 44px;
+  }
+
+  .el-menu-item {
+    min-height: 44px;
+  }
+}

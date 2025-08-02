@@ -48,8 +48,8 @@
                         <span class="text-success">{{ formatMoney(row.receiveAmount) }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="remark" label="备注" min-width="150" />
-                <el-table-column label="操作" width="120" fixed="right">
+                <el-table-column prop="remark" label="备注" min-width="150" class="remark-column" />
+                <el-table-column label="操作" width="120" fixed="right" class="action-column">
                     <template #default="{ row }">
                         <el-button type="danger" link @click="deleteBill(row)">
                             <el-icon>

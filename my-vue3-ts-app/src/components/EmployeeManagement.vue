@@ -14,10 +14,10 @@
                             <el-icon>
                                 <Plus />
                             </el-icon>
-                            新增员工
+                            <span class="btn-text">新增员工</span>
                         </el-button>
                         <el-input v-model="searchKeyword" placeholder="搜索员工姓名" style="width: 200px; margin-left: 10px"
-                            clearable>
+                            clearable class="search-input">
                             <template #prefix>
                                 <el-icon>
                                     <Search />
@@ -29,7 +29,8 @@
             </template>
 
             <!-- 员工列表 -->
-            <el-table :data="filteredEmployees" style="width: 100%" v-loading="loading" empty-text="暂无员工数据">
+            <el-table :data="filteredEmployees" style="width: 100%" v-loading="loading" empty-text="暂无员工数据"
+                class="employee-table">
                 <el-table-column prop="name" label="姓名" min-width="120">
                     <template #default="{ row }">
                         <el-button type="primary" link @click="viewEmployeeDetail(row)">
@@ -37,25 +38,25 @@
                         </el-button>
                     </template>
                 </el-table-column>
-                <el-table-column prop="phone" label="电话" min-width="150" />
-                <el-table-column prop="createTime" label="创建时间" min-width="180">
+                <el-table-column prop="phone" label="电话" min-width="150" class="phone-column" />
+                <el-table-column prop="createTime" label="创建时间" min-width="180" class="time-column">
                     <template #default="{ row }">
                         {{ formatDate(row.createTime) }}
                     </template>
                 </el-table-column>
-                <el-table-column label="操作" width="200" fixed="right">
+                <el-table-column label="操作" width="200" fixed="right" class="action-column">
                     <template #default="{ row }">
                         <el-button type="primary" link @click="editEmployee(row)">
                             <el-icon>
                                 <Edit />
                             </el-icon>
-                            编辑
+                            <span class="action-text">编辑</span>
                         </el-button>
                         <el-button type="danger" link @click="deleteEmployee(row)">
                             <el-icon>
                                 <Delete />
                             </el-icon>
-                            删除
+                            <span class="action-text">删除</span>
                         </el-button>
                     </template>
                 </el-table-column>
@@ -63,8 +64,8 @@
         </el-card>
 
         <!-- 新增/编辑员工对话框 -->
-        <el-dialog v-model="dialogVisible" :title="isEdit ? '编辑员工' : '新增员工'" width="500px"
-            :close-on-click-modal="false">
+        <el-dialog v-model="dialogVisible" :title="isEdit ? '编辑员工' : '新增员工'" width="90%" :close-on-click-modal="false"
+            class="employee-dialog">
             <el-form ref="formRef" :model="formData" :rules="formRules" label-width="80px">
                 <el-form-item label="姓名" prop="name">
                     <el-input v-model="formData.name" placeholder="请输入员工姓名" />
@@ -231,6 +232,8 @@ onMounted(() => {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 .title {
@@ -247,11 +250,84 @@ onMounted(() => {
 .header-actions {
     display: flex;
     align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-text {
+    margin-left: 4px;
 }
 
 .dialog-footer {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .employee-management {
+        padding: 10px;
+    }
+
+    .card-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .header-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .search-input {
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+
+    .btn-text {
+        display: none;
+    }
+
+    .phone-column,
+    .time-column {
+        display: none;
+    }
+
+    .action-column {
+        width: 120px !important;
+    }
+
+    .action-text {
+        display: none;
+    }
+
+    .employee-table {
+        font-size: 12px;
+    }
+
+    .employee-table .cell {
+        padding: 8px 4px;
+    }
+
+    .employee-dialog {
+        width: 95% !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .employee-management {
+        padding: 5px;
+    }
+
+    .header-card {
+        margin-bottom: 10px;
+    }
+
+    .title {
+        font-size: 16px;
+    }
 }
 </style>

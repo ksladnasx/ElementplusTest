@@ -6,7 +6,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["vue-router"],
+    "types": ["vue-router", "element-plus/global"],
 
     /* Linting */
     "strict": true,
